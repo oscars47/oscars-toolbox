@@ -1,5 +1,5 @@
 # oscars-toolbox
-A package for helpful general algorithms I've developed. See also my wesbite, https://oscars47.github.io/.
+A package for helpful general algorithms I've developed. See the PyPI release: https://pypi.org/project/oscars-toolbox/. See also my wesbite, https://oscars47.github.io/.
 
 ## Current functions as of latest version:
  ### ```trabbit``` 
