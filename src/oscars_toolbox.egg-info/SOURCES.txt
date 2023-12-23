@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+src/gradient_descent/__init__.py
+src/gradient_descent/trabbit.py
+src/oscars_toolbox.egg-info/PKG-INFO
+src/oscars_toolbox.egg-info/SOURCES.txt
+src/oscars_toolbox.egg-info/dependency_links.txt
+src/oscars_toolbox.egg-info/top_level.txt

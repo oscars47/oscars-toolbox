@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: oscars-toolbox
+Version: 0.0.2
+Summary: A package for optimization.
+Author-email: Oscar Scholin <scholinoscar@gmail.com>
+Project-URL: Homepage, https://github.com/oscars47/oscars-toolbox
+Project-URL: Issues, https://github.com/oscars47/oscars-toolbox/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# oscars-toolbox
+A package for helpful general algorithms I've developed. See also my PyPI page linked in the README.

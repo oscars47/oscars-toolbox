@@ -1,0 +1,18 @@
+[project]
+name = "oscars_toolbox"
+version = "0.0.2"
+authors = [
+  { name = "Oscar Scholin", email = "scholinoscar@gmail.com" }
+]
+description = "A package for optimization."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/oscars47/oscars-toolbox"
+Issues = "https://github.com/oscars47/oscars-toolbox/issues"
