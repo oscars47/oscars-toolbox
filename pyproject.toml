@@ -1,10 +1,10 @@
 [project]
 name = "oscars_toolbox"
-version = "0.0.2"
+version = "0.0.4"
 authors = [
   { name = "Oscar Scholin", email = "scholinoscar@gmail.com" }
 ]
-description = "A package for optimization."
+description = "A package for optimization. See the GitHub repo for instructions and version notes."
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
