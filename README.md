@@ -24,8 +24,8 @@ A package for helpful general algorithms I've developed. See the PyPI release: h
    x_best, loss_best = trabbit(
     loss_func: loss_func_p,
     random_gen: rand_gen,
-    bounds: Any | None = None,
-    x0_ls: Any | None = None,
+    bounds: None,
+    x0_ls: None,
     num: int = 1000, 
     alpha: float = 0.3,
     temperature: float = 0.1,
