@@ -1,10 +1,11 @@
 ## Updates
+
+### 0.1.1
+* within `implement_torch` added ROC AUC score
+
 ### 0.1.0
-added ```implement_torch```, ```torch_models```
+* added ```implement_torch```, ```torch_models```
 
-
-```
-## Updates
 ### 0.0.4
 ```trabbit```: 
 * renamed the folder 'gradient_descent' -> 'oscars_toolbox' so now you can actually import the package as 'oscars_toolbox'

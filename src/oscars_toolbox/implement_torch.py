@@ -2,7 +2,7 @@ import torch
 from torch import nn, optim
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score, roc_auc_score
 
 def train_only(model, device, train_loader, val_loader, num_epochs=5, learning_rate=1e-3, weight_decay=1e-4, loss_func=nn.CrossEntropyLoss()):
     model.to(device)
@@ -115,14 +115,16 @@ def evaluate(model, test_loader, num_classes, device, return_extra_metrics=False
         precision = precision_score(all_targets, all_preds, average='weighted')
         recall = recall_score(all_targets, all_preds, average='weighted')
         f1 = f1_score(all_targets, all_preds, average='weighted')
+        roc_auc = roc_auc_score(all_targets, all_preds, average='weighted')
 
         # ensure they are all floats
         accuracy = float(accuracy)
         precision = float(precision)
         recall = float(recall)
         f1 = float(f1)
+        roc_auc = float(roc_auc)
 
-        return conf_matrix, accuracy, precision, recall, f1
+        return conf_matrix, accuracy, precision, recall, f1, roc_auc
 
 def count_parameters_torch(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
