@@ -93,6 +93,7 @@ def evaluate(model, test_loader, num_classes, device, return_extra_metrics=False
     all_targets = []
 
     model.eval()
+    t0 = time.time()
     with torch.no_grad():
         for inputs, targets in test_loader:
             inputs, targets = inputs.to(device), targets.to(device)
@@ -103,6 +104,7 @@ def evaluate(model, test_loader, num_classes, device, return_extra_metrics=False
 
     all_preds = torch.cat(all_preds)
     all_targets = torch.cat(all_targets)
+    tf = time.time()
 
     # normalize by row, true labels
     conf_matrix = confusion_matrix(all_targets, all_preds, labels=range(num_classes), normalize='true') 
@@ -124,7 +126,10 @@ def evaluate(model, test_loader, num_classes, device, return_extra_metrics=False
         f1 = float(f1)
         roc_auc = float(roc_auc)
 
-        return conf_matrix, accuracy, precision, recall, f1, roc_auc
+        # time taken per sample to compute
+        time_per_sample = (tf - t0) / len(all_targets)
+
+        return conf_matrix, accuracy, precision, recall, f1, roc_auc, time_per_sample
 
 def count_parameters_torch(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)

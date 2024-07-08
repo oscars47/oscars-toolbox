@@ -1,5 +1,8 @@
 ## Updates
 
+### 0.1.2
+* added timing data for prediction within `implement_torch.evaluate`.
+
 ### 0.1.1
 * within `implement_torch` added ROC AUC score
 
