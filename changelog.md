@@ -1,5 +1,8 @@
 ## Updates
 
+### 0.1.4
+* added `implement_xgb.evaluate_xgb```
+
 ### 0.1.3
 * added ```implement_xgb.py``` and added the function ```evaluate_xgb```
 
