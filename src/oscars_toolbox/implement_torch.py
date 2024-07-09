@@ -1,4 +1,4 @@
-import torch
+import torch, time
 from torch import nn, optim
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
@@ -87,7 +87,7 @@ def train_model(model_func, device, train_loader, val_loader, input_size, output
         model = model_func(num_classes=output_size, num_channels=img_channels) # here neurons_ls is (out_channels, kernel_size, and stride)
     return train_only(model, device, train_loader, val_loader, num_epochs, learning_rate, weight_decay, loss_func)
 
-def evaluate(model, test_loader, num_classes, device, return_extra_metrics=False):
+def evaluate_torch(model, test_loader, num_classes, device, return_extra_metrics=False):
     model.to(device)
     all_preds = []
     all_targets = []
