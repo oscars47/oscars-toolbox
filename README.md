@@ -7,7 +7,7 @@ This repository contains a custom gradient descent algorithm called "Tortoise an
 
 ### Functions and Their Usage
 
-#### `trabbit`
+## `trabbit`
 
 The `trabbit` function implements the custom gradient descent algorithm. It optimizes the parameters of a given loss function using a combination of gradient descent and random input generation.
 
@@ -325,3 +325,118 @@ Here is an example workflow using the provided classes and functions to train an
    num_params = count_parameters_torch(trained_model)
    print(f'The model has {num_params} trainable parameters.')
    ```
+
+
+##  `implement_xgb.py`
+### Functions
+The `evaluate_xgb` function is designed to evaluate the performance of an XGBoost model on a validation dataset. Here's a detailed description of its functionality:
+
+#### Parameters:
+- `xgb_model`: The trained XGBoost model to be evaluated.
+- `X_val`: The validation input features.
+- `y_val`: The true labels for the validation set.
+- `return_extra_metrics` (default is `False`): A boolean flag indicating whether to return additional evaluation metrics beyond the confusion matrix.
+
+#### Functionality:
+1. **Time Tracking**:
+   - The function records the start time using `time.time()`.
+
+2. **Prediction**:
+   - The model makes predictions on the validation data `X_val` and stores them in `y_pred`.
+
+3. **Time Tracking**:
+   - The function records the end time using `time.time()`.
+
+4. **Confusion Matrix**:
+   - The function computes the confusion matrix for `y_val` and `y_pred` using `confusion_matrix(y_val, y_pred, normalize='true')`.
+
+5. **Return Basic Metrics**:
+   - If `return_extra_metrics` is `False`, the function returns only the confusion matrix.
+
+6. **Return Extra Metrics**:
+   - If `return_extra_metrics` is `True`, the function calculates additional performance metrics:
+     - `accuracy`: The accuracy score of the predictions.
+     - `precision`: The weighted precision score.
+     - `recall`: The weighted recall score.
+     - `f1`: The weighted F1 score.
+     - `roc_auc`: The weighted ROC-AUC score.
+   - It also calculates the time taken per sample by dividing the total evaluation time by the number of samples in `y_val`.
+   - The function returns a tuple containing the confusion matrix, accuracy, precision, recall, F1 score, ROC-AUC score, and time per sample.
+
+#### Returns:
+- If `return_extra_metrics` is `False`: The confusion matrix.
+- If `return_extra_metrics` is `True`: A tuple containing the confusion matrix, accuracy, precision, recall, F1 score, ROC-AUC score, and time per sample.
+
+Here is an example workflow demonstrating how to use the `evaluate_xgb` function:
+
+#### Example Workflow
+
+1. **Import Necessary Libraries**:
+   Ensure you have the required libraries imported.
+   ```python
+   import time
+   from oscars_toolbox.implement_xgb import evaluate_xgb
+   ```
+
+2. **Load Dataset**:
+   Load and prepare your dataset. In this example, we'll use the Iris dataset.
+   ```python
+   # Load the Iris dataset
+   data = load_iris()
+   X = data.data
+   y = data.target
+
+   # Split the dataset into training and validation sets
+   X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+   ```
+
+3. **Train the XGBoost Model**:
+   Train an XGBoost model on the training data.
+   ```python
+   # Initialize the XGBoost classifier
+   xgb_model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
+
+   # Train the model
+   xgb_model.fit(X_train, y_train)
+   ```
+
+4. **Evaluate the Model**:
+   Use the `evaluate_xgb` function to evaluate the trained model on the validation set.
+   ```python
+   # Evaluate the model and get only the confusion matrix
+   conf_matrix = evaluate_xgb(xgb_model, X_val, y_val)
+   print("Confusion Matrix:\n", conf_matrix)
+
+   # Evaluate the model and get all the metrics
+   conf_matrix, accuracy, precision, recall, f1, roc_auc, time_per_sample = evaluate_xgb(xgb_model, X_val, y_val, return_extra_metrics=True)
+   print("Confusion Matrix:\n", conf_matrix)
+   print(f"Accuracy: {accuracy}")
+   print(f"Precision: {precision}")
+   print(f"Recall: {recall}")
+   print(f"F1 Score: {f1}")
+   print(f"ROC AUC Score: {roc_auc}")
+   print(f"Time per sample: {time_per_sample} seconds")
+   ```
+
+### Example Output
+
+This example workflow would produce output similar to the following:
+
+```
+Confusion Matrix:
+ [[1.  0.  0. ]
+  [0.  1.  0. ]
+  [0.  0.  1. ]]
+Confusion Matrix:
+ [[1.  0.  0. ]
+  [0.  1.  0. ]
+  [0.  0.  1. ]]
+Accuracy: 1.0
+Precision: 1.0
+Recall: 1.0
+F1 Score: 1.0
+ROC AUC Score: 1.0
+Time per sample: 0.0012345678901234567 seconds
+```
+
+This workflow provides a comprehensive way to evaluate an XGBoost model's performance on a validation dataset, using both basic and extended metrics depending on the user's needs.
