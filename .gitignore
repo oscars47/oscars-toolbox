@@ -1,1 +1,4 @@
 .DS_Store
+build/lib/oscars_toolbox/
+dist/oscars_toolbox-0.1.0-py3-none-any.whl
+dist/oscars_toolbox-0.1.0.tar.gz
