@@ -3,6 +3,7 @@ from torch import nn, optim
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score, roc_auc_score
+import numpy as np
 
 def train_only(model, device, train_loader, val_loader, num_epochs=5, learning_rate=1e-3, weight_decay=1e-4, loss_func=nn.CrossEntropyLoss()):
     model.to(device)
@@ -87,37 +88,42 @@ def train_model(model_func, device, train_loader, val_loader, input_size, output
         model = model_func(num_classes=output_size, num_channels=img_channels) # here neurons_ls is (out_channels, kernel_size, and stride)
     return train_only(model, device, train_loader, val_loader, num_epochs, learning_rate, weight_decay, loss_func)
 
-def evaluate_torch(model, test_loader, num_classes, device, return_extra_metrics=False):
+def evaluate_torch(model, test_loader, num_classes, device, return_extra_metrics=True):
     model.to(device)
+    raw_probs = []
     all_preds = []
     all_targets = []
 
     model.eval()
-    t0 = time.time()
+    t0 = time.perf_counter()
     with torch.no_grad():
         for inputs, targets in test_loader:
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
+            raw_probs.append(outputs.cpu())
             _, predictions = outputs.max(1)
             all_preds.append(predictions.cpu())
             all_targets.append(targets.cpu())
 
     all_preds = torch.cat(all_preds)
     all_targets = torch.cat(all_targets)
-    tf = time.time()
+    tf = time.perf_counter()
+
+    raw_probs = torch.cat(raw_probs)
+    # use softmax to get probabilities
+    raw_probs = nn.functional.softmax(raw_probs, dim=1)
 
     # normalize by row, true labels
     conf_matrix = confusion_matrix(all_targets, all_preds, labels=range(num_classes), normalize='true') 
 
     if not return_extra_metrics:
         return conf_matrix
-    
     else:
         accuracy = accuracy_score(all_targets, all_preds)
         precision = precision_score(all_targets, all_preds, average='weighted')
         recall = recall_score(all_targets, all_preds, average='weighted')
         f1 = f1_score(all_targets, all_preds, average='weighted')
-        roc_auc = roc_auc_score(all_targets, all_preds, average='weighted')
+        roc_auc = roc_auc_score(all_targets, raw_probs, average='weighted', multi_class='ovr')
 
         # ensure they are all floats
         accuracy = float(accuracy)

@@ -1,5 +1,12 @@
 ## Updates
 
+### 0.1.6
+* fixed various issues, notably the ROC-AUC calc for torch models and using `time.perf_counter()` instead of `time.time()` for increased time resolution
+
+### 0.1.5
+* added probability vectors for correct roc-auc usage
+* changed default extra param argument to true
+
 ### 0.1.4
 * added `implement_xgb.evaluate_xgb```
 
