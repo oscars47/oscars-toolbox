@@ -1,6 +1,6 @@
 [project]
 name = "oscars_toolbox"
-version = "0.1.5"
+version = "0.1.6"
 authors = [
   { name = "Oscar Scholin", email = "scholinoscar@gmail.com" }
 ]
