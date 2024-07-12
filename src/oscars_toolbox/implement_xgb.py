@@ -39,7 +39,19 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 
-def plot_confusion_matrix(confusion_matrix_val, confusion_matrix_test, allowed_categories, accuracy_val, accuracy_test, save_path, show_percentages=False, val_Xp=None, test_Xp=None, y_val_pred=None, y_test_pred=None, features=None):
+def plot_confusion_matrix(confusion_matrix_val, confusion_matrix_test, allowed_categories, accuracy_val, accuracy_test, save_path, show_percentages=False, val_Xp=None, test_Xp=None, y_val_pred=None, y_test_pred=None, y_val_true=None, y_test_true=None, features=None, show_plot=False, only_features=False):
+
+    if len(allowed_categories) > 19 and len(allowed_categories) < 40:
+            colors_tab20b = cm.get_cmap('tab20b', 20)
+            colors_tab20c = cm.get_cmap('tab20c', 20)
+
+            # Combine the colormaps to reach 39 colors (we will use the first 19 colors from tab20c to avoid duplication)
+            new_colors = np.vstack((colors_tab20b(np.linspace(0, 1, 20)),
+                                    colors_tab20c(np.linspace(0, 1, len(allowed_categories) - 20))))
+    elif len(allowed_categories) <= 19:
+        new_colors = cm.get_cmap('tab20b', 20)(np.linspace(0, 1, len(allowed_categories)))
+    else:
+        raise ValueError('Too many categories to plot, need to add more colors to the colormap. **will be fixed in future versions**')
 
     if val_Xp is None or test_Xp is None or y_val_pred is None or y_test_pred is None or features is None:
         fig, ax = plt.subplots(1, 2, figsize=(18, 9))
@@ -74,20 +86,10 @@ def plot_confusion_matrix(confusion_matrix_val, confusion_matrix_test, allowed_c
         plt.tight_layout()
         plt.savefig(save_path)
         plt.close()
-    else:
-        # Generate colors from the 'tab20b' and 'tab20c' colormaps
 
-        if len(allowed_categories) > 19 and len(allowed_categories) < 40:
-            colors_tab20b = cm.get_cmap('tab20b', 20)
-            colors_tab20c = cm.get_cmap('tab20c', 20)
-
-            # Combine the colormaps to reach 39 colors (we will use the first 19 colors from tab20c to avoid duplication)
-            new_colors = np.vstack((colors_tab20b(np.linspace(0, 1, 20)),
-                                    colors_tab20c(np.linspace(0, 1, len(allowed_categories) - 20))))
-        elif len(allowed_categories) <= 19:
-            new_colors = cm.get_cmap('tab20b', 20)(np.linspace(0, 1, len(allowed_categories)))
-        else:
-            raise ValueError('Too many categories to plot, need to add more colors to the colormap. **will be fixed in future versions**')
+    
+    elif not only_features:
+        # Generate colors from the 'tab20b' and 'tab20c' colormap
 
         # Create a colormap from these colors
         custom_cmap = mcolors.ListedColormap(new_colors)
@@ -153,5 +155,59 @@ def plot_confusion_matrix(confusion_matrix_val, confusion_matrix_test, allowed_c
 
         plt.tight_layout()
         plt.savefig(save_path)
+        if show_plot:
+            plt.show()
+        plt.close()
+
+    elif y_val_true is not None and y_test_true is not None:
+        # just the 3d scatter plots
+        import plotly.graph_objects as go
+
+        # Create 3D scatter plot for validation set
+        custom_cmap = [f'rgb({int(r*255)}, {int(g*255)}, {int(b*255)})' for r, g, b, _ in new_colors]
+
+        # Create 3D scatter plot for validation set
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter3d(
+            x=val_Xp[:, 0],
+            y=val_Xp[:, 1],
+            z=val_Xp[:, 2],
+            mode='markers',
+            marker=dict(
+                size=5,
+                color=[custom_cmap[val] for val in y_val_true],
+                opacity=0.8
+            ),
+            name='Validation Set, True Colors'
+        ))
+
+        # Create 3D scatter plot for test set
+        fig.add_trace(go.Scatter3d(
+            x=test_Xp[:, 0],
+            y=test_Xp[:, 1],
+            z=test_Xp[:, 2],
+            mode='markers',
+            marker=dict(
+                size=5,
+                color=[custom_cmap[test] for test in y_test_true],
+                opacity=0.8
+            ),
+            name='Test Set, True Colors'
+        ))
+
+        fig.update_layout(
+            title='3D Scatter Plots',
+            scene=dict(
+                xaxis_title='Feature 1',
+                yaxis_title='Feature 2',
+                zaxis_title='Feature 3'
+            ),
+            margin=dict(l=0, r=0, b=0, t=40)
+        )
+
+        fig.show()
+
+
 
 

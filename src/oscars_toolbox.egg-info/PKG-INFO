@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: oscars_toolbox
-Version: 0.1.5
+Version: 0.1.6
 Summary: A package for optimization. See the GitHub repo for instructions and version notes.
 Author-email: Oscar Scholin <scholinoscar@gmail.com>
 Project-URL: Homepage, https://github.com/oscars47/oscars-toolbox

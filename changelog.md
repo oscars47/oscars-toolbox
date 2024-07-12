@@ -1,5 +1,8 @@
 ## Updates
 
+### 0.1.7
+* updated plot for implement_xgb
+
 ### 0.1.6
 * fixed various issues, notably the ROC-AUC calc for torch models and using `time.perf_counter()` instead of `time.time()` for increased time resolution
 
