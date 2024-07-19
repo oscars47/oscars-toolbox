@@ -1,19 +1,51 @@
-import time
+import time, os
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score, roc_auc_score
 import numpy as np
 
+from hyperopt import fmin, tpe, hp, Trials, STATUS_OK
+from hyperopt.pyll.base import scope
+
+def optimize_hyperparameters(xgb_func, results_dir, max_evals=1000, space = {
+        'max_depth': scope.int(hp.quniform('max_depth', 3, 10, 1)),
+        'lr': hp.uniform('lr', 0.01, 0.3),
+        'n_estimators': scope.int(hp.quniform('n_estimators', 50, 300, 10))
+    }):
+    # Define the objective function
+    def objective(params):
+        val_acc = xgb_func(max_depth=params['max_depth'], lr=params['lr'], n_estimators=params['n_estimators'])
+        return {'loss': -val_acc, 'status': STATUS_OK}
+
+    # Run the optimization
+    trials = Trials()
+    try:
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, trials=trials)
+    except Exception as e:
+        print(e)
+        best = trials.best_trial['result']['loss']
+    
+    print("Best hyperparameters:", best)
+    
+    # Train and evaluate with the best hyperparameters
+    best_params = {
+        'max_depth': int(best['max_depth']),
+        'lr': best['lr'],
+        'n_estimators': int(best['n_estimators'])
+    }
+
+    with open(os.path.join(results_dir, 'best_params.txt'), 'w') as f:
+        f.write(str(best_params))
 
 def evaluate_xgb(xgb_model, X_val, y_val, return_extra_metrics=True):
     t0 = time.perf_counter()
     y_pred = xgb_model.predict(X_val)
-    tf = time.perf_counter()
-    conf_matrix = confusion_matrix(y_val, y_pred, normalize='true')
+    tf = time.perf_counter()    
+    accuracy = accuracy_score(y_val, y_pred)
+
 
     if not return_extra_metrics:
-        return conf_matrix
+        return accuracy
     
     else:
-        accuracy = accuracy_score(y_val, y_pred)
         precision = precision_score(y_val, y_pred, average='weighted')
         recall = recall_score(y_val, y_pred, average='weighted')
         f1 = f1_score(y_val, y_pred, average='weighted')
@@ -32,6 +64,8 @@ def evaluate_xgb(xgb_model, X_val, y_val, return_extra_metrics=True):
         roc_auc = roc_auc_score(y_val_one_hot, y_pred_proba, average='weighted', multi_class='ovr')
 
         time_per_sample = (tf - t0) / len(y_val)
+
+        conf_matrix = confusion_matrix(y_val, y_pred, normalize='true')\
 
         return conf_matrix, accuracy, precision, recall, f1, roc_auc, time_per_sample
     

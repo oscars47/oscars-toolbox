@@ -1,5 +1,8 @@
 ## Updates
 
+### 0.1.8
+* added `optimize_hyperparameters`
+
 ### 0.1.7
 * updated plot for implement_xgb
 
